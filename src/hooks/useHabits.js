@@ -31,7 +31,8 @@ const useHabits = ({ limit, sort, category, search } = {}) => {
         );
         setHabits(res.data);
       } catch (err) {
-        setError(err.response?.data?.message || "Failed to load habits");
+        setError("No data (server off)");
+        setHabits([]); // Mock data
       } finally {
         setLoading(false);
       }
@@ -40,7 +41,7 @@ const useHabits = ({ limit, sort, category, search } = {}) => {
     fetchHabits();
   }, [user, limit, sort, category, search]);
 
-  return { habits, loading, error, refetch: () => fetchHabits() };
+  return { habits, loading, error };
 };
 
 export default useHabits;

@@ -9,35 +9,35 @@ import {
 } from "react-router-dom";
 import MainLayout from './layouts/MainLayout';
 import Home from './pages/Home';
-// import ErrorPage from './pages/ErrorPage'; // আমরা পরে এটি যোগ করবো
+import Login from "../src/pages/Login"
+
+// --- (সমাধান শুরু) ---
+
+// ১. AuthProvider ইম্পোর্ট করুন (সঠিক পাথ ব্যবহার করুন)
+import AuthProvider from './context/AuthContext'; 
+
+// ২. React Toastify ইম্পোর্ট করুন
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+// --- (সমাধান শেষ) ---
+
 
 // রাউটার কনফিগারেশন
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <MainLayout />, // আমাদের মেইন লেআউট (Navbar + Footer সহ)
-    // errorElement: <ErrorPage />, // 404 পেজ
+    element: <MainLayout />, 
     children: [
       {
         path: "/",
         element: <Home />,
       },
-      // {
-      //   path: "/add-habit",
-      //   element: <AddHabit />,
-      // },
-      // {
-      //   path: "/my-habits",
-      //   element: <MyHabits />,
-      // },
-      // {
-      //   path: "/browse-public",
-      //   element: <BrowsePublicHabits />,
-      // },
-      // {
-      //   path: "/login",
-      //   element: <Login />,
-      // },
+      // ... (আপনার অন্যান্য রুট) ...
+      {
+        path: "/login",
+        element: <Login />,
+      },
       // {
       //   path: "/signup",
       //   element: <SignUp />,
@@ -48,6 +48,11 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    {/* ৩. <AuthProvider> দিয়ে পুরো অ্যাপকে র‍্যাপ করুন */}
+    <AuthProvider>
+      <RouterProvider router={router} />
+      {/* ৪. ToastContainer এখানে যোগ করুন */}
+      <ToastContainer position="top-center" autoClose={3000} />
+    </AuthProvider>
   </React.StrictMode>,
 )

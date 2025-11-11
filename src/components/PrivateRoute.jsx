@@ -1,13 +1,25 @@
-import { useAuth } from "../context/AuthContext";
-import { Navigate, useLocation } from "react-router-dom";
+// src/routes/PrivateRoute.jsx
+import React, { useContext } from 'react';
+import { Navigate, useLocation } from 'react-router-dom';
+import { AuthContext } from '../context/AuthContext';
+// import LoadingSpinner from '../components/LoadingSpinner'; // আপনার লোডিং স্পিনার
 
 const PrivateRoute = ({ children }) => {
-  const { user, loading } = useAuth();
+  const { user, loading } = useContext(AuthContext);
   const location = useLocation();
 
-  if (loading) return <div className="flex justify-center items-center h-screen"><div className="animate-spin rounded-full h-12 w-12 border-t-4 border-blue-600"></div></div>;
+  if (loading) {
+    // return <LoadingSpinner />;
+    return <div>Loading...</div>; // একটি লোডিং স্পিনার দেখান
+  }
 
-  return user ? children : <Navigate to="/login" state={{ from: location }} replace />;
+  if (user) {
+    return children; // ইউজার থাকলে তাকে পেজটি দেখান
+  }
+
+  // ইউজার না থাকলে লগইন পেজে পাঠান
+  // state={{ from: location }} মনে রাখবে ইউজার কোন পেজে যেতে চেয়েছিল
+  return <Navigate to="/login" state={{ from: location }} replace></Navigate>;
 };
 
 export default PrivateRoute;

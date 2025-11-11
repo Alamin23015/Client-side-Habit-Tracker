@@ -9,8 +9,8 @@ import Login from "../pages/Login";
 import Register from "../pages/Register";
 import AddHabit from "../pages/AddHabit";
 import MyHabits from "../pages/MyHabits";
-import PublicHabits from "../pages/PublicHabits";
-import HabitDetails from "../pages/HabitDetails";
+//import PublicHabits from "../pages/PublicHabits";
+//import HabitDetails from "../pages/HabitDetails";
 import NotFound from "../pages/NotFound";
 
 const AppRoutes = () => {

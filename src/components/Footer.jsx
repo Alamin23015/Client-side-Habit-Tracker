@@ -1,35 +1,38 @@
+// src/components/Footer.jsx
+import React from 'react';
+
 const Footer = () => {
-  return (
-    <footer className="bg-gray-900 text-white py-10">
-      <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-8">
-        <div>
-          <h3 className="text-2xl font-bold">HabitFlow</h3>
-          <p className="mt-2 text-gray-400">Build streaks. Boost productivity.</p>
-        </div>
-        <div>
-          <h4 className="font-semibold">Contact</h4>
-          <p className="text-gray-400">support@habitflow.com</p>
-          <p className="text-gray-400">+880 1234 567890</p>
-        </div>
-        <div>
-          <h4 className="font-semibold">Links</h4>
-          <p><a href="#" className="text-gray-400 hover:text-white">Terms</a></p>
-          <p><a href="#" className="text-gray-400 hover:text-white">Privacy</a></p>
-        </div>
-        <div>
-          <h4 className="font-semibold">Follow Us</h4>
-          <div className="flex space-x-3">
-            <a href="#"><img src="/x-logo-white.png" alt="X" className="w-6" /></a>
-            <a href="#"><img src="/fb.png" alt="FB" className="w-6" /></a>
-            <a href="#"><img src="/ig.png" alt="IG" className="w-6" /></a>
-          </div>
-        </div>
-      </div>
-      <div className="text-center mt-8 text-gray-500 text-sm">
-        © 2025 HabitFlow. All rights reserved.
-      </div>
-    </footer>
-  );
+    return (
+        <footer className="bg-gray-800 text-white p-10">
+            <div className="container mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <h2 className="text-2xl font-bold mb-4">HabitHero</h2>
+                    <p>Build streaks, boost productivity.</p>
+                </div>
+                <div>
+                    <h3 className="text-lg font-semibold mb-3">Contact Us</h3>
+                    <p>Email: contact@habithero.com</p>
+                    <p>Phone: +123 456 7890</p>
+                </div>
+                <div>
+                    <h3 className="text-lg font-semibold mb-3">Quick Links</h3>
+                    <ul>
+                        <li><a href="/terms" className="hover:underline">Terms & Conditions</a></li>
+                        <li><a href="/privacy" className="hover:underline">Privacy Policy</a></li>
+                    </ul>
+                     {/* Social Media Links (using new X logo as requested) */}
+                     <div className="flex space-x-4 mt-4">
+                        <a href="#" className="text-xl">X</a> 
+                        <a href="#" className="text-xl">Facebook</a>
+                        <a href="#" className="text-xl">Instagram</a>
+                    </div>
+                </div>
+            </div>
+            <div className="text-center mt-8 border-t border-gray-700 pt-4">
+                <p>&copy; {new Date().getFullYear()} HabitHero. All rights reserved.</p>
+            </div>
+        </footer>
+    );
 };
 
 export default Footer;

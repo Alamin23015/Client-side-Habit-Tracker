@@ -1,116 +1,86 @@
-import { useState } from "react";
-import { useAuth } from "../context/AuthContext";
-import { Link, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
-import { FcGoogle } from "react-icons/fc";
+// src/pages/Register.jsx
+import React, { useContext } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { AuthContext } from '../context/AuthContext';
+import { toast } from 'react-toastify';
 
 const Register = () => {
-  const [form, setForm] = useState({
-    name: "",
-    email: "",
-    photoURL: "",
-    password: "",
-  });
-  const { register, googleLogin } = useAuth();
+  const { createUser, updateUserProfile, googleSignIn } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  const validatePassword = (pwd) => {
-    const hasUpper = /[A-Z]/.test(pwd);
-    const hasLower = /[a-z]/.test(pwd);
-    const hasMinLength = pwd.length >= 6;
-    return { hasUpper, hasLower, hasMinLength };
-  };
-
-  const handleSubmit = async (e) => {
+  const handleRegister = (e) => {
     e.preventDefault();
-    const { password } = form;
-    const { hasUpper, hasLower, hasMinLength } = validatePassword(password);
+    const form = e.target;
+    const name = form.name.value;
+    const email = form.email.value;
+    const photoURL = form.photoURL.value;
+    const password = form.password.value;
 
-    if (!hasUpper) return toast.error("Password must have an uppercase letter");
-    if (!hasLower) return toast.error("Password must have a lowercase letter");
-    if (!hasMinLength) return toast.error("Password must be at least 6 characters");
-
-    try {
-      await register(form.name, form.email, form.password, form.photoURL || null);
-      navigate("/");
-    } catch (err) {
-      toast.error("Registration failed");
+    // --- পাসওয়ার্ড ভ্যালিডেশন ---
+    if (password.length < 6) {
+      toast.error('Password must be at least 6 characters long.');
+      return;
+    } else if (!/[A-Z]/.test(password)) {
+      toast.error('Password must contain at least one uppercase letter.');
+      return;
+    } else if (!/[a-z]/.test(password)) {
+      toast.error('Password must contain at least one lowercase letter.');
+      return;
     }
-  };
+    // --- ভ্যালিডেশন শেষ ---
 
-  const handleGoogle = async () => {
-    try {
-      await googleLogin();
-      navigate("/");
-    } catch (err) {
-      toast.error("Google signup failed");
-    }
+    // ইউজার তৈরি
+    createUser(email, password)
+      .then((result) => {
+        // প্রোফাইল আপডেট
+        updateUserProfile(name, photoURL)
+          .then(() => {
+            toast.success('Registration Successful!');
+            navigate('/'); // সফল হলে হোম পেজে পাঠান
+          })
+          .catch((error) => toast.error(error.message));
+      })
+      .catch((error) => {
+        toast.error(error.message);
+      });
   };
+  
+  const handleGoogleSignIn = () => {
+    googleSignIn()
+      .then(result => {
+        toast.success('Logged in with Google!');
+        navigate('/');
+      })
+      .catch(error => toast.error(error.message));
+  }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 to-pink-100 py-12">
-      <div className="card w-full max-w-md">
-        <h2 className="text-3xl font-bold text-center mb-8">Join HabitFlow</h2>
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <input
-            type="text"
-            name="name"
-            placeholder="Full Name"
-            value={form.name}
-            onChange={handleChange}
-            required
-            className="w-full px-4 py-3 border rounded-lg"
-          />
-          <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            value={form.email}
-            onChange={handleChange}
-            required
-            className="w-full px-4 py-3 border rounded-lg"
-          />
-          <input
-            type="url"
-            name="photoURL"
-            placeholder="Photo URL (optional)"
-            value={form.photoURL}
-            onChange={handleChange}
-            className="w-full px-4 py-3 border rounded-lg"
-          />
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            value={form.password}
-            onChange={handleChange}
-            required
-            className="w-full px-4 py-3 border rounded-lg"
-          />
-          <button type="submit" className="w-full btn-primary py-3 text-lg">
-            Register
-          </button>
-        </form>
-
-        <button
-          onClick={handleGoogle}
-          className="w-full mt-4 flex items-center justify-center gap-3 border py-3 rounded-lg hover:bg-gray-50"
-        >
-          <FcGoogle size={24} />
-          <span>Continue with Google</span>
-        </button>
-
-        <p className="text-center mt-6 text-gray-600">
-          Already have an account?{" "}
-          <Link to="/login" className="text-blue-600 font-semibold hover:underline">
-            Login
-          </Link>
-        </p>
-      </div>
+    <div className="login-register-container"> {/* এই ক্লাসের CSS নিজে করুন */}
+      <h2>Register your account</h2>
+      <form onSubmit={handleRegister}>
+        <div>
+          <label>Your Name</label>
+          <input type="text" name="name" placeholder="Enter your name" required />
+        </div>
+        <div>
+          <label>Email address</label>
+          <input type="email" name="email" placeholder="Enter your email" required />
+        </div>
+        <div>
+          <label>Photo URL</label>
+          <input type="text" name="photoURL" placeholder="Enter photo URL" required />
+        </div>
+        <div>
+          <label>Password</label>
+          <input type="password" name="password" placeholder="Enter password" required />
+        </div>
+        <button type="submit">Register</button>
+      </form>
+      <p>
+        Already have an account? <Link to="/login">Login here</Link>
+      </p>
+      <hr />
+      <button onClick={handleGoogleSignIn}>Login with Google</button>
     </div>
   );
 };
