@@ -1,34 +1,68 @@
-import { useAuth } from "../context/AuthContext";
-import { toast } from "react-toastify";
+// src/pages/AddHabit.jsx
+import { useContext } from 'react';
+import { AuthContext } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 const AddHabit = () => {
-  const { user } = useAuth();
+  const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    toast.success("Habit added! (Mock - no server)");
+    const form = e.target;
+    const title = form.title.value;
+    const description = form.description.value;
+    const category = form.category.value;
+    const reminderTime = form.reminderTime.value;
+
+    const habitData = {
+      title,
+      description,
+      category,
+      reminderTime,
+      creatorEmail: user.email,
+      creatorName: user.displayName,
+      image: '', // ImgBB আপলোড করলে পরে যোগ করো
+      completionHistory: [],
+      createdAt: new Date().toISOString(),
+    };
+
+    try {
+      const res = await fetch('https://habit-hero-server.vercel.app/habits', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(habitData),
+      });
+      if (res.ok) {
+        toast.success('Habit added successfully!');
+        navigate('/my-habits');
+      }
+    } catch (err) {
+      toast.error('Failed to add habit');
+    }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
-      <div className="max-w-2xl mx-auto bg-white shadow-lg rounded-xl p-8">
-        <h2 className="text-3xl font-bold text-center mb-8">Add New Habit</h2>
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <input type="text" placeholder="Title" required className="w-full px-4 py-3 border rounded-lg" />
-          <textarea placeholder="Description" required rows="4" className="w-full px-4 py-3 border rounded-lg"></textarea>
-          <select className="w-full px-4 py-3 border rounded-lg">
-            <option>Morning</option><option>Work</option><option>Fitness</option>
-          </select>
-          <input type="time" className="w-full px-4 py-3 border rounded-lg" />
-          <div className="grid grid-cols-2 gap-4">
-            <input type="text" value={user?.email || ""} readOnly className="bg-gray-100 px-4 py-2 rounded" />
-            <input type="text" value={user?.displayName || ""} readOnly className="bg-gray-100 px-4 py-2 rounded" />
-          </div>
-          <button type="submit" className="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700">
-            Add Habit
-          </button>
-        </form>
-      </div>
+    <div className="container mx-auto p-6 max-w-2xl">
+      <h1 className="text-3xl font-bold mb-6">Add New Habit</h1>
+      <form onSubmit={handleSubmit} className="space-y-5">
+        <input name="title" placeholder="Habit Title" required className="input input-bordered w-full" />
+        <textarea name="description" placeholder="Description" required className="textarea textarea-bordered w-full" />
+        <select name="category" className="select select-bordered w-full" required>
+          <option value="">Select Category</option>
+          <option>Morning</option>
+          <option>Work</option>
+          <option>Fitness</option>
+          <option>Evening</option>
+          <option>Study</option>
+        </select>
+        <input type="time" name="reminderTime" className="input input-bordered w-full" />
+        <div className="flex gap-3">
+          <button type="submit" className="btn btn-primary flex-1">Add Habit</button>
+          <button type="button" onClick={() => navigate(-1)} className="btn btn-ghost flex-1">Cancel</button>
+        </div>
+      </form>
     </div>
   );
 };

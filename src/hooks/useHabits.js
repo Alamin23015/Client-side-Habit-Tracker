@@ -1,45 +1,26 @@
-import { useState, useEffect } from "react";
-import axios from "axios";
-import { useAuth } from "../context/AuthContext";
+// src/hooks/useHabits.js
+import { useEffect, useState } from 'react';
 
-const useHabits = ({ limit, sort, category, search } = {}) => {
-  const { user } = useAuth();
+const useHabits = () => {
   const [habits, setHabits] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchHabits = async () => {
-      if (!user) {
-        setLoading(false);
-        return;
-      }
-
       try {
-        const token = await user.getIdToken();
-        const params = new URLSearchParams();
-        if (limit) params.append("limit", limit);
-        if (sort) params.append("sort", sort);
-        if (category) params.append("category", category);
-        if (search) params.append("search", search);
-
-        const res = await axios.get(
-          `${import.meta.env.VITE_API_URL}/habits?${params.toString()}`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-        setHabits(res.data);
+        setLoading(true);
+        const res = await fetch('https://habit-hero-server.vercel.app/habits'); // তোমার সার্ভার URL
+        const data = await res.json();
+        setHabits(data);
       } catch (err) {
-        setError("No data (server off)");
-        setHabits([]); // Mock data
+        setError(err.message);
       } finally {
         setLoading(false);
       }
     };
-
     fetchHabits();
-  }, [user, limit, sort, category, search]);
+  }, []);
 
   return { habits, loading, error };
 };

@@ -1,36 +1,34 @@
-import { Link } from "react-router-dom";
+// src/components/HabitCard.jsx
+import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
 
 const HabitCard = ({ habit }) => {
   return (
-    <div className="card h-full flex flex-col">
-      {habit.image && (
+    <motion.div
+      whileHover={{ y: -5 }}
+      className="card bg-base-100 shadow-lg hover:shadow-xl transition-all"
+    >
+      <figure className="h-48 overflow-hidden">
         <img
-          src={habit.image}
+          src={habit.image || 'https://i.ibb.co.com/0j2wK7W/habit-placeholder.jpg'}
           alt={habit.title}
-          className="w-full h-48 object-cover rounded-t-xl"
+          className="w-full h-full object-cover"
         />
-      )}
-      <div className="p-5 flex-1 flex flex-col justify-between">
-        <div>
-          <h3 className="text-xl font-bold text-gray-800">{habit.title}</h3>
-          <p className="text-gray-600 mt-2 line-clamp-2">{habit.description}</p>
-          <p className="text-sm text-gray-500 mt-3">
-            by <span className="font-medium">{habit.userName}</span>
-          </p>
+      </figure>
+      <div className="card-body p-5">
+        <h3 className="card-title text-lg">{habit.title}</h3>
+        <p className="text-sm text-gray-600 line-clamp-2">{habit.description}</p>
+        <div className="flex justify-between items-center mt-3">
+          <span className="badge badge-primary">{habit.category}</span>
+          <span className="text-xs text-gray-500">by {habit.creatorName}</span>
         </div>
-        <div className="mt-4 flex justify-between items-center">
-          <span className="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full text-xs font-medium">
-            {habit.category}
-          </span>
-          <Link
-            to={`/habit/${habit._id}`}
-            className="text-blue-600 font-medium hover:underline text-sm"
-          >
-            View Details →
+        <div className="card-actions mt-4">
+          <Link to={`/habit/${habit._id}`} className="btn btn-primary btn-sm w-full">
+            View Details
           </Link>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

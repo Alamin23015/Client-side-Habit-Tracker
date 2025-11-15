@@ -1,5 +1,6 @@
 // src/components/Footer.jsx
 import React from 'react';
+import { FaFacebook, FaTwitter, FaInstagram } from 'react-icons/fa';
 
 const Footer = () => {
     return (
@@ -22,9 +23,9 @@ const Footer = () => {
                     </ul>
                      {/* Social Media Links (using new X logo as requested) */}
                      <div className="flex space-x-4 mt-4">
-                        <a href="#" className="text-xl">X</a> 
-                        <a href="#" className="text-xl">Facebook</a>
-                        <a href="#" className="text-xl">Instagram</a>
+                        <a href="#"><FaFacebook size={24} /></a>
+          <a href="#"><FaTwitter size={24} /></a>
+          <a href="#"><FaInstagram size={24} /></a>
                     </div>
                 </div>
             </div>
