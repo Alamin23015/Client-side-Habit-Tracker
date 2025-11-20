@@ -1,55 +1,39 @@
-// src/routes/Router.jsx
-import { createBrowserRouter } from 'react-router-dom';
-import MainLayout from '../layouts/MainLayout';
-import Home from '../pages/Home';
-import Login from '../pages/Login';
-import Register from '../pages/Register';
-import AddHabit from '../pages/AddHabit';
-import MyHabits from '../pages/MyHabits';
-import BrowsePublicHabits from '../pages/BrowsePublicHabits';
-import HabitDetails from '../pages/HabitDetails';
-// import NotFoundPage from '../pages/NotFoundPage';
-import PrivateRoute from './PrivateRoute'; // PrivateRoute ইম্পোর্ট করুন
+import { createBrowserRouter } from "react-router-dom";
+import MainLayout from "../layouts/MainLayout";
+import Home from "../pages/Home";
+import Login from "../pages/Login";
+import Register from "../pages/Register";
+import NotFound from "../pages/NotFound";
+import AddHabit from "../pages/AddHabit"; 
+import MyHabits from "../pages/MyHabits";
+import BrowsePublicHabits from "../pages/BrowsePublicHabits"; // New
+import HabitDetails from "../pages/HabitDetails"; 
+import PrivateRoute from "../components/PrivateRoute"; 
 
 const router = createBrowserRouter([
   {
-    path: '/',
+    path: "/",
     element: <MainLayout />,
-    // errorElement: <NotFoundPage />, // ৪0৪ পেজ এখানে দিন
+    errorElement: <NotFound />,
     children: [
-      {
-        path: '/',
-        element: <Home />,
+      { path: "/", element: <Home /> },
+      { path: "/browse-public", element: <BrowsePublicHabits /> }, // Public
+      { 
+        path: "/add-habit", 
+        element: <PrivateRoute><AddHabit /></PrivateRoute> 
       },
-      {
-        path: '/browse-public',
-        element: <BrowsePublicHabits />,
+      { 
+        path: "/my-habits", 
+        element: <PrivateRoute><MyHabits /></PrivateRoute> 
       },
-      // --- প্রাইভেট রুট শুরু ---
-      {
-        path: '/add-habit',
-        element: <PrivateRoute><AddHabit /></PrivateRoute>,
+      { 
+        path: "/habit/:id", 
+        element: <PrivateRoute><HabitDetails /></PrivateRoute> 
       },
-      {
-        path: '/my-habits',
-        element: <PrivateRoute><MyHabits /></PrivateRoute>,
-      },
-      {
-        path: '/habit/:id', // হ্যাবিট ডিটেইলস পেজ
-        element: <PrivateRoute><HabitDetails /></PrivateRoute>,
-      },
-      // --- প্রাইভেট রুট শেষ ---
     ],
   },
-  // Navbar/Footer ছাড়া পেজগুলো
-  {
-    path: '/login',
-    element: <Login />,
-  },
-  {
-    path: '/register',
-    element: <Register />,
-  },
+  { path: "/login", element: <Login /> },
+  { path: "/register", element: <Register /> },
 ]);
 
 export default router;

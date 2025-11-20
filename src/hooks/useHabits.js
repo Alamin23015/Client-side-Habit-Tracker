@@ -10,7 +10,7 @@ const useHabits = () => {
     const fetchHabits = async () => {
       try {
         setLoading(true);
-        const res = await fetch('https://habit-hero-server.vercel.app/habits'); // তোমার সার্ভার URL
+        const res = await fetch('https://habit-hero-server.vercel.app/habits');
         const data = await res.json();
         setHabits(data);
       } catch (err) {

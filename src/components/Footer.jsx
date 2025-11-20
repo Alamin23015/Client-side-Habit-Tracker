@@ -1,39 +1,90 @@
 // src/components/Footer.jsx
 import React from 'react';
-import { FaFacebook, FaTwitter, FaInstagram } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
+import { FaFacebookF, FaTwitter, FaInstagram, FaGithub } from 'react-icons/fa';
 
 const Footer = () => {
-    return (
-        <footer className="bg-gray-800 text-white p-10">
-            <div className="container mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div>
-                    <h2 className="text-2xl font-bold mb-4">HabitHero</h2>
-                    <p>Build streaks, boost productivity.</p>
-                </div>
-                <div>
-                    <h3 className="text-lg font-semibold mb-3">Contact Us</h3>
-                    <p>Email: contact@habithero.com</p>
-                    <p>Phone: +123 456 7890</p>
-                </div>
-                <div>
-                    <h3 className="text-lg font-semibold mb-3">Quick Links</h3>
-                    <ul>
-                        <li><a href="/terms" className="hover:underline">Terms & Conditions</a></li>
-                        <li><a href="/privacy" className="hover:underline">Privacy Policy</a></li>
-                    </ul>
-                     {/* Social Media Links (using new X logo as requested) */}
-                     <div className="flex space-x-4 mt-4">
-                        <a href="#"><FaFacebook size={24} /></a>
-          <a href="#"><FaTwitter size={24} /></a>
-          <a href="#"><FaInstagram size={24} /></a>
-                    </div>
-                </div>
-            </div>
-            <div className="text-center mt-8 border-t border-gray-700 pt-4">
-                <p>&copy; {new Date().getFullYear()} HabitHero. All rights reserved.</p>
-            </div>
-        </footer>
-    );
+  const currentYear = new Date().getFullYear();
+
+  return (
+    <footer className="bg-gray-900 text-gray-300 py-12 mt-20">
+      <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
+
+        {/* Column 1: Brand */}
+        <div className="space-y-4">
+          <h2 className="text-3xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+            HabitHero
+          </h2>
+          <p className="text-gray-400 text-sm leading-relaxed">
+            Build powerful habits, track your streaks, and become the best version of yourself — one day at a time.
+          </p>
+          <div className="flex space-x-4 mt-6">
+            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer"
+               className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-purple-600 transition">
+              <FaFacebookF size={18} />
+            </a>
+            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer"
+               className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-sky-500 transition">
+              <FaTwitter size={18} />
+            </a>
+            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer"
+               className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-pink-600 transition">
+              <FaInstagram size={18} />
+            </a>
+            <a href="https://github.com" target="_blank" rel="noopener noreferrer"
+               className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-gray-500 transition">
+              <FaGithub size={18} />
+            </a>
+          </div>
+        </div>
+
+        {/* Column 2: Quick Links */}
+        <div>
+          <h3 className="text-lg font-semibold text-white mb-5">Quick Links</h3>
+          <ul className="space-y-3 text-sm">
+            <li><Link to="/" className="hover:text-purple-400 transition">Home</Link></li>
+            <li><Link to="/add-habit" className="hover:text-purple-400 transition">Add Habit</Link></li>
+            <li><Link to="/my-habits" className="hover:text-purple-400 transition">My Habits</Link></li>
+            <li><Link to="/browse-public" className="hover:text-purple-400 transition">Browse Public</Link></li>
+          </ul>
+        </div>
+
+        {/* Column 3: Legal */}
+        <div>
+          <h3 className="text-lg font-semibold text-white mb-5">Legal</h3>
+          <ul className="space-y-3 text-sm">
+            <li><Link to="/privacy" className="hover:text-purple-400 transition">Privacy Policy</Link></li>
+            <li><Link to="/terms" className="hover:text-purple-400 transition">Terms of Service</Link></li>
+            <li><Link to="/cookies" className="hover:text-purple-400 transition">Cookie Policy</Link></li>
+          </ul>
+        </div>
+
+        {/* Column 4: Contact */}
+        <div>
+          <h3 className="text-lg font-semibold text-white mb-5">Contact Us</h3>
+          <ul className="space-y-3 text-sm text-gray-400">
+            <li className="flex items-center gap-2">
+              <span className="text-purple-400">✉</span> hello@habithero.com
+            </li>
+            <li className="flex items-center gap-2">
+              <span className="text-purple-400">☎</span> +880 123 456 789
+            </li>
+            <li className="flex items-center gap-2">
+              <span className="text-purple-400">⌂</span> Dhaka, Bangladesh
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      {/* Bottom Bar */}
+      <div className="mt-12 pt-8 border-t border-gray-800 text-center">
+        <p className="text-sm text-gray-500">
+          © {currentYear} <span className="text-purple-400 font-medium">HabitHero</span>. All rights reserved. 
+          Made with <span className="text-red-500">❤</span> for habit builders.
+        </p>
+      </div>
+    </footer>
+  );
 };
 
 export default Footer;

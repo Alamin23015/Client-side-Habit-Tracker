@@ -16,7 +16,6 @@ const Register = () => {
     const photoURL = form.photoURL.value;
     const password = form.password.value;
 
-    // --- পাসওয়ার্ড ভ্যালিডেশন ---
     if (password.length < 6) {
       toast.error('Password must be at least 6 characters long.');
       return;
@@ -27,16 +26,13 @@ const Register = () => {
       toast.error('Password must contain at least one lowercase letter.');
       return;
     }
-    // --- ভ্যালিডেশন শেষ ---
 
-    // ইউজার তৈরি
     createUser(email, password)
       .then((result) => {
-        // প্রোফাইল আপডেট
         updateUserProfile(name, photoURL)
           .then(() => {
             toast.success('Registration Successful!');
-            navigate('/'); // সফল হলে হোম পেজে পাঠান
+            navigate('/');
           })
           .catch((error) => toast.error(error.message));
       })
@@ -47,7 +43,7 @@ const Register = () => {
   
   const handleGoogleSignIn = () => {
     googleSignIn()
-      .then(result => {
+      .then(() => {
         toast.success('Logged in with Google!');
         navigate('/');
       })
@@ -55,32 +51,90 @@ const Register = () => {
   }
 
   return (
-    <div className="login-register-container"> {/* এই ক্লাসের CSS নিজে করুন */}
-      <h2>Register your account</h2>
-      <form onSubmit={handleRegister}>
-        <div>
-          <label>Your Name</label>
-          <input type="text" name="name" placeholder="Enter your name" required />
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4 py-12">
+      <div className="max-w-md w-full bg-white rounded-xl shadow-lg p-8 space-y-8">
+        <div className="text-center">
+          <h2 className="text-3xl font-bold text-gray-900">Create your account</h2>
+          <p className="mt-2 text-sm text-gray-600">Join us today!</p>
         </div>
-        <div>
-          <label>Email address</label>
-          <input type="email" name="email" placeholder="Enter your email" required />
+
+        <form onSubmit={handleRegister} className="space-y-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Your Name</label>
+            <input
+              type="text"
+              name="name"
+              placeholder="Enter your name"
+              required
+              className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Email address</label>
+            <input
+              type="email"
+              name="email"
+              placeholder="Enter your email"
+              required
+              className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Photo URL</label>
+            <input
+              type="text"
+              name="photoURL"
+              placeholder="https://example.com/photo.jpg"
+              required
+              className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Password</label>
+            <input
+              type="password"
+              name="password"
+              placeholder="Enter strong password"
+              required
+              className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-md transition duration-200 transform hover:scale-105"
+          >
+            Register
+          </button>
+        </form>
+
+        <div className="text-center text-sm text-gray-600">
+          Already have an account?{' '}
+          <Link to="/login" className="font-medium text-blue-600 hover:text-blue-500">
+            Login here
+          </Link>
         </div>
-        <div>
-          <label>Photo URL</label>
-          <input type="text" name="photoURL" placeholder="Enter photo URL" required />
+
+        <div className="relative">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-gray-300"></div>
+          </div>
+          <div className="relative flex justify-center text-sm">
+            <span className="px-4 bg-white text-gray-500">Or continue with</span>
+          </div>
         </div>
-        <div>
-          <label>Password</label>
-          <input type="password" name="password" placeholder="Enter password" required />
-        </div>
-        <button type="submit">Register</button>
-      </form>
-      <p>
-        Already have an account? <Link to="/login">Login here</Link>
-      </p>
-      <hr />
-      <button onClick={handleGoogleSignIn}>Login with Google</button>
+
+        <button
+          onClick={handleGoogleSignIn}
+          className="w-full flex items-center justify-center gap-3 py-3 px-4 border border-gray-300 rounded-lg hover:bg-gray-50 transition font-medium text-gray-700"
+        >
+          <img src="https://www.svgrepo.com/show/355037/google.svg" alt="Google" className="w-5 h-5" />
+          Continue with Google
+        </button>
+      </div>
     </div>
   );
 };
