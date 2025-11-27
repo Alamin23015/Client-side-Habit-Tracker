@@ -11,7 +11,7 @@ const Home = () => {
   const [featuredHabits, setFeaturedHabits] = useState([]);
 
   useEffect(() => {
-    axios.get(`${import.meta.env.VITE_API_URL}/habits`)
+    axios.get(`https://server-three-lake.vercel.app/api/habits`)
       .then(res => setFeaturedHabits(res.data.slice(0, 6)))
       .catch(err => console.error(err));
   }, []);
