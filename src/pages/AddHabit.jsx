@@ -1,11 +1,10 @@
-
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import axios from "axios";
 
-const image_hosting_key = import.meta.env.VITE_IMGBB_KEY || "YOUR_KEY";
+const image_hosting_key = import.meta.env.VITE_IMGBB_KEY || "b6b53868649698506502517215558588";
 const image_hosting_api = `https://api.imgbb.com/1/upload?key=${image_hosting_key}`;
 
 const AddHabit = () => {
@@ -19,7 +18,7 @@ const AddHabit = () => {
     const title = form.title.value.trim();
     const description = form.description.value.trim();
     const category = form.category.value;
-    const reminderTime = form.reminderTime.value;
+    const reminderTime = form.reminderTime.value || null;
     const imageFile = form.image.files[0];
 
     if (!title || !description) {
@@ -30,6 +29,7 @@ const AddHabit = () => {
     setLoading(true);
     try {
       let imageUrl = "";
+
       if (imageFile) {
         const formData = new FormData();
         formData.append("image", imageFile);
@@ -37,26 +37,23 @@ const AddHabit = () => {
         imageUrl = res.data.data.display_url;
       }
 
-      const token = await user.getIdToken();
-      await axios.post(
-        `${import.meta.env.VITE_API_URL}/habits`,
-        {
-          habitTitle: title,
-          description,
-          category,
-          reminderTime: reminderTime || null,
-          imageUrl: imageUrl || null,
-          userEmail: user.email,
-          userName: user.displayName,
-        },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+
+      await axios.post("https://server-three-lake.vercel.app/api/habits", {
+        habitTitle: title,
+        description,
+        category,
+        reminderTime,
+        imageUrl: imageUrl || null,
+        userEmail: user.email,
+        userName: user.displayName || user.email.split("@")[0],
+      });
 
       toast.success("Habit created successfully!");
       form.reset();
       navigate("/my-habits");
     } catch (err) {
-      toast.error(err.response?.data?.message || "Something went wrong!");
+      console.error("Error adding habit:", err);
+      toast.error(err.response?.data?.message || "Failed to add habit!");
     } finally {
       setLoading(false);
     }
@@ -68,14 +65,13 @@ const AddHabit = () => {
                     transition-all duration-500">
 
       <div className="max-w-3xl mx-auto">
-     
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 
                          dark:from-purple-400 dark:to-pink-400 bg-clip-text text-transparent">
             Create a New Habit
           </h1>
           <p className="mt-4 text-lg text-gray-600 dark:text-gray-300">
-            Small changes today → Massive results tomorrow
+            Small changes today to Massive results tomorrow
           </p>
         </div>
 
@@ -126,8 +122,6 @@ const AddHabit = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-
-              
               <div className="relative">
                 <label className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">
                   Category
@@ -135,6 +129,7 @@ const AddHabit = () => {
                 <select
                   name="category"
                   required
+                  defaultValue=""
                   className="w-full px-6 py-4 rounded-2xl border 
                              border-gray-300 dark:border-gray-600 
                              bg-white dark:bg-gray-800 
@@ -144,9 +139,7 @@ const AddHabit = () => {
                              transition-all duration-300 
                              appearance-none cursor-pointer pr-12"
                 >
-                  <option value="" disabled selected className="text-gray-500">
-                    Choose a category
-                  </option>
+                  <option value="" disabled>Choose a category</option>
                   <option value="Health">Health & Fitness</option>
                   <option value="Mindfulness">Mindfulness</option>
                   <option value="Learning">Learning & Growth</option>
@@ -155,11 +148,6 @@ const AddHabit = () => {
                   <option value="Evening">Evening Routine</option>
                   <option value="Other">Other</option>
                 </select>
-                <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none mt-10">
-                  <svg className="w-5 h-5 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-                  </svg>
-                </div>
               </div>
 
               <div>
@@ -191,14 +179,13 @@ const AddHabit = () => {
                               bg-white/50 dark:bg-gray-800/50">
                 <input type="file" name="image" accept="image/*" className="hidden" id="img-upload" />
                 <label htmlFor="img-upload" className="cursor-pointer block">
-                  <div className="text-6xl mb-4 opacity-60">Upload</div>
+                  <div className="text-6xl mb-4 opacity-60">Camera</div>
                   <p className="text-gray-600 dark:text-gray-300">Click to upload or drag & drop</p>
                   <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">PNG, JPG, GIF up to 5MB</p>
                 </label>
               </div>
             </div>
 
-       
             <div className="bg-gradient-to-r from-purple-100/70 to-pink-100/70 
                             dark:from-purple-900/40 dark:to-pink-900/40 
                             rounded-2xl p-6 border border-purple-200/60 dark:border-purple-800/60">
@@ -218,7 +205,6 @@ const AddHabit = () => {
               </div>
             </div>
 
-        
             <button
               type="submit"
               disabled={loading}

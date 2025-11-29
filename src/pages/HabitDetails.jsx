@@ -74,7 +74,7 @@ const HabitDetails = () => {
                 {habit.description}
               </p>
 
-              {/* Stats */}
+              
               <div className="grid grid-cols-2 gap-4 mb-8">
                 <div className="bg-gradient-to-r from-orange-500 to-red-600 p-5 sm:p-6 rounded-2xl text-white text-center shadow-lg">
                   <p className="text-4xl sm:text-5xl font-black">{habit.currentStreak || 0}</p>
@@ -109,7 +109,7 @@ const HabitDetails = () => {
 
               
               <div className="flex flex-col sm:flex-row gap-4">
-                <button onClick={() => navigate(-1)} className="btn btn-ghost btn-lg">Back</button>
+                <button onClick={() => navigate(-1)} className="btn btn-ghost bg-green-500 btn-lg">Back</button>
                 <button 
                   onClick={handleComplete}
                   className="btn btn-lg bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 

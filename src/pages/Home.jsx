@@ -95,7 +95,7 @@ const Home = () => {
         </div>
       </section>
 
-      {/* 3. Why Build Habits? (Cards with Icons) */}
+     
       <section className="py-24 bg-base-100 relative overflow-hidden">
         {/* Decorative blobs */}
         <div className="absolute top-0 left-0 w-64 h-64 bg-primary/10 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>

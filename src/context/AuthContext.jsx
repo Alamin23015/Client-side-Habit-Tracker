@@ -1,4 +1,3 @@
-// src/context/AuthContext.jsx
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import {
   getAuth,
@@ -10,7 +9,7 @@ import {
   onAuthStateChanged,
   updateProfile,
 } from 'firebase/auth';
-import app from '../firebase/firebase.config.js'; // .js extension দরকার (Vite/ESM)
+import app from '../firebase/firebase.config.js';
 
 export const AuthContext = createContext(null);
 
@@ -21,20 +20,24 @@ const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
+
   const createUser = (email, password) => {
     setLoading(true);
     return createUserWithEmailAndPassword(auth, email, password);
   };
+
 
   const signIn = (email, password) => {
     setLoading(true);
     return signInWithEmailAndPassword(auth, email, password);
   };
 
+
   const googleSignIn = () => {
     setLoading(true);
     return signInWithPopup(auth, googleProvider);
   };
+
 
   const logOut = () => {
     setLoading(true);
@@ -44,9 +47,10 @@ const AuthProvider = ({ children }) => {
   const updateUserProfile = (name, photo) => {
     return updateProfile(auth.currentUser, {
       displayName: name,
-      photoURL: photo, // Firebase এ photoURL চায়
+      photoURL: photo,
     });
   };
+
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -54,13 +58,14 @@ const AuthProvider = ({ children }) => {
       setLoading(false);
     });
 
-    return () => unsubscribe(); // সরাসরি return করো, nested return না
+
+    return () => unsubscribe();
   }, []);
 
   const authInfo = {
     user,
     loading,
-    setLoading, // এটা দরকার হলে রাখো (যেমন: login এর পর loading false)
+    setLoading,
     createUser,
     signIn,
     googleSignIn,
@@ -74,6 +79,7 @@ const AuthProvider = ({ children }) => {
     </AuthContext.Provider>
   );
 };
+
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
