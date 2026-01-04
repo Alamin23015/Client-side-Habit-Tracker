@@ -3,14 +3,35 @@ import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import axios from "axios";
+import { FaCloudUploadAlt, FaTimes } from "react-icons/fa";
 
-const image_hosting_key = import.meta.env.VITE_IMGBB_KEY || "b6b53868649698506502517215558588";
+// --- এই জায়গাটি আপডেট করা হয়েছে ---
+const image_hosting_key = "b738c9197f515d672f081911f812822e"; // আপনার দেওয়া নতুন Key
 const image_hosting_api = `https://api.imgbb.com/1/upload?key=${image_hosting_key}`;
 
 const AddHabit = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  
   const [loading, setLoading] = useState(false);
+  const [imagePreview, setImagePreview] = useState(null); // ছবির প্রিভিউ দেখার জন্য স্টেট
+  const [imageFile, setImageFile] = useState(null); // আসল ফাইল স্টোর করার জন্য
+
+  // ১. ইমেজ সিলেক্ট করার পর প্রিভিউ দেখানোর ফাংশন
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImageFile(file);
+      setImagePreview(URL.createObjectURL(file)); // লোকাল প্রিভিউ URL তৈরি
+    }
+  };
+
+  // ২. ইমেজ রিমুভ করার ফাংশন
+  const handleRemoveImage = () => {
+    setImageFile(null);
+    setImagePreview(null);
+    document.getElementById("img-upload").value = ""; // ইনপুট ফিল্ড রিসেট
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -19,7 +40,6 @@ const AddHabit = () => {
     const description = form.description.value.trim();
     const category = form.category.value;
     const reminderTime = form.reminderTime.value || null;
-    const imageFile = form.image.files[0];
 
     if (!title || !description) {
       toast.error("Title and Description are required!");
@@ -30,27 +50,39 @@ const AddHabit = () => {
     try {
       let imageUrl = "";
 
+      // ৩. যদি ইমেজ সিলেক্ট করা থাকে, তবেই ImgBB তে আপলোড হবে
       if (imageFile) {
         const formData = new FormData();
         formData.append("image", imageFile);
+        
         const res = await axios.post(image_hosting_api, formData);
-        imageUrl = res.data.data.display_url;
+        
+        if (res.data.success) {
+            imageUrl = res.data.data.display_url;
+        } else {
+            throw new Error("Failed to upload image to ImgBB");
+        }
       }
 
-
-      await axios.post("https://server-three-lake.vercel.app/api/habits", {
+      // ৪. সার্ভারে ডাটা পাঠানো
+      const habitData = {
         habitTitle: title,
         description,
         category,
         reminderTime,
-        imageUrl: imageUrl || null,
+        imageUrl: imageUrl || null, // ইমেজ না থাকলে null যাবে
         userEmail: user.email,
         userName: user.displayName || user.email.split("@")[0],
-      });
+        createdAt: new Date(), // চাইলে সময় যোগ করতে পারেন
+      };
+
+      await axios.post("https://server-three-lake.vercel.app/api/habits", habitData);
 
       toast.success("Habit created successfully!");
       form.reset();
+      handleRemoveImage(); // ইমেজ স্টেট ক্লিয়ার করা
       navigate("/my-habits");
+
     } catch (err) {
       console.error("Error adding habit:", err);
       toast.error(err.response?.data?.message || "Failed to add habit!");
@@ -81,6 +113,7 @@ const AddHabit = () => {
 
           <form onSubmit={handleSubmit} className="space-y-8">
 
+            {/* Title Input */}
             <div>
               <label className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">
                 Habit Title
@@ -90,17 +123,14 @@ const AddHabit = () => {
                 name="title"
                 placeholder="e.g., Drink 3L water daily"
                 required
-                className="w-full px-6 py-4 rounded-2xl border 
-                           border-gray-300 dark:border-gray-600 
-                           bg-white dark:bg-gray-800 
-                           text-gray-900 dark:text-white 
-                           placeholder:text-gray-400 dark:placeholder:text-gray-500
-                           focus:ring-4 focus:ring-purple-500/30 
-                           focus:border-purple-500 dark:focus:border-purple-400 
+                className="w-full px-6 py-4 rounded-2xl border border-gray-300 dark:border-gray-600 
+                           bg-white dark:bg-gray-800 text-gray-900 dark:text-white 
+                           focus:ring-4 focus:ring-purple-500/30 focus:border-purple-500 
                            transition-all duration-300"
               />
             </div>
 
+            {/* Description Input */}
             <div>
               <label className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">
                 Description
@@ -110,19 +140,16 @@ const AddHabit = () => {
                 rows="4"
                 placeholder="Why is this habit important to you?"
                 required
-                className="w-full px-6 py-4 rounded-2xl border 
-                           border-gray-300 dark:border-gray-600 
-                           bg-white dark:bg-gray-800 
-                           text-gray-900 dark:text-white 
-                           placeholder:text-gray-400 dark:placeholder:text-gray-500
-                           focus:ring-4 focus:ring-purple-500/30 
-                           focus:border-purple-500 dark:focus:border-purple-400 
+                className="w-full px-6 py-4 rounded-2xl border border-gray-300 dark:border-gray-600 
+                           bg-white dark:bg-gray-800 text-gray-900 dark:text-white 
+                           focus:ring-4 focus:ring-purple-500/30 focus:border-purple-500 
                            transition-all duration-300 resize-none"
               />
             </div>
 
+            {/* Category and Time */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div className="relative">
+              <div>
                 <label className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">
                   Category
                 </label>
@@ -130,14 +157,10 @@ const AddHabit = () => {
                   name="category"
                   required
                   defaultValue=""
-                  className="w-full px-6 py-4 rounded-2xl border 
-                             border-gray-300 dark:border-gray-600 
-                             bg-white dark:bg-gray-800 
-                             text-gray-900 dark:text-white 
-                             focus:ring-4 focus:ring-purple-500/30 
-                             focus:border-purple-500 dark:focus:border-purple-400 
-                             transition-all duration-300 
-                             appearance-none cursor-pointer pr-12"
+                  className="w-full px-6 py-4 rounded-2xl border border-gray-300 dark:border-gray-600 
+                             bg-white dark:bg-gray-800 text-gray-900 dark:text-white 
+                             focus:ring-4 focus:ring-purple-500/30 focus:border-purple-500 
+                             transition-all duration-300"
                 >
                   <option value="" disabled>Choose a category</option>
                   <option value="Health">Health & Fitness</option>
@@ -157,35 +180,69 @@ const AddHabit = () => {
                 <input
                   type="time"
                   name="reminderTime"
-                  className="w-full px-6 py-4 rounded-2xl border 
-                             border-gray-300 dark:border-gray-600 
-                             bg-white dark:bg-gray-800 
-                             text-gray-900 dark:text-white 
-                             focus:ring-4 focus:ring-purple-500/30 
-                             focus:border-purple-500 dark:focus:border-purple-400 
+                  className="w-full px-6 py-4 rounded-2xl border border-gray-300 dark:border-gray-600 
+                             bg-white dark:bg-gray-800 text-gray-900 dark:text-white 
+                             focus:ring-4 focus:ring-purple-500/30 focus:border-purple-500 
                              transition-all duration-300"
                 />
               </div>
             </div>
 
+            {/* --- Image Upload Section (UPDATED) --- */}
             <div>
               <label className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">
                 Habit Image (Optional)
               </label>
-              <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 
-                              rounded-2xl p-10 text-center 
-                              hover:border-purple-500 dark:hover:border-purple-400 
-                              transition-all duration-300 cursor-pointer 
-                              bg-white/50 dark:bg-gray-800/50">
-                <input type="file" name="image" accept="image/*" className="hidden" id="img-upload" />
-                <label htmlFor="img-upload" className="cursor-pointer block">
-                  <div className="text-6xl mb-4 opacity-60">Camera</div>
-                  <p className="text-gray-600 dark:text-gray-300">Click to upload or drag & drop</p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">PNG, JPG, GIF up to 5MB</p>
-                </label>
+              
+              <div className={`relative border-2 border-dashed rounded-2xl p-6 text-center transition-all duration-300 
+                              ${imagePreview ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20' : 'border-gray-300 dark:border-gray-600 hover:border-purple-500 cursor-pointer'}`}>
+                
+                {imagePreview ? (
+                  // যদি ইমেজ সিলেক্ট করা থাকে, প্রিভিউ দেখাবে
+                  <div className="relative group">
+                    <img 
+                      src={imagePreview} 
+                      alt="Preview" 
+                      className="w-full h-64 object-cover rounded-xl shadow-md"
+                    />
+                    <button 
+                      type="button"
+                      onClick={handleRemoveImage}
+                      className="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full shadow-lg hover:bg-red-600 transition"
+                    >
+                      <FaTimes />
+                    </button>
+                    <p className="mt-2 text-sm text-green-600 font-semibold">Image Selected Successfully</p>
+                  </div>
+                ) : (
+                  // যদি ইমেজ না থাকে, আপলোড অপশন দেখাবে
+                  <>
+                    <input 
+                      type="file" 
+                      name="image" 
+                      accept="image/*" 
+                      className="hidden" 
+                      id="img-upload" 
+                      onChange={handleImageChange} // এখানে ইভেন্ট হ্যান্ডলার যোগ করা হয়েছে
+                    />
+                    <label htmlFor="img-upload" className="cursor-pointer block h-full w-full py-8">
+                      <div className="flex justify-center mb-4 text-purple-500">
+                         {/* যদি আইকন না থাকে, টেক্সট দেখাবে */}
+                         <FaCloudUploadAlt className="text-6xl" /> 
+                      </div>
+                      <p className="text-lg font-medium text-gray-700 dark:text-gray-200">
+                        Click to upload Habit Photo
+                      </p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                        JPG, PNG, GIF allowed (Max 5MB)
+                      </p>
+                    </label>
+                  </>
+                )}
               </div>
             </div>
 
+            {/* Created By Section */}
             <div className="bg-gradient-to-r from-purple-100/70 to-pink-100/70 
                             dark:from-purple-900/40 dark:to-pink-900/40 
                             rounded-2xl p-6 border border-purple-200/60 dark:border-purple-800/60">
@@ -205,6 +262,7 @@ const AddHabit = () => {
               </div>
             </div>
 
+            {/* Submit Button */}
             <button
               type="submit"
               disabled={loading}
@@ -217,7 +275,7 @@ const AddHabit = () => {
               {loading ? (
                 <span className="flex items-center justify-center gap-3">
                   <span className="loading loading-spinner"></span>
-                  Creating Your Habit...
+                  Processing...
                 </span>
               ) : (
                 "Create Habit"

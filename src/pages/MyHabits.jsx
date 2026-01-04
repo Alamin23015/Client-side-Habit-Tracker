@@ -93,7 +93,7 @@ const MyHabits = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50/60 via-pink-50/60 to-blue-50/60 
-                    dark:from-purple-950/70 dark:via-pink-950/60 dark:to-indigo-950/70 py-10 px-4">
+                    dark:from-purple-950/70 dark:via-pink-950/60 dark:to-indigo-950/70 py-10 px-4 relative">
 
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
@@ -190,15 +190,30 @@ const MyHabits = () => {
         )}
       </div>
 
-      {selectedHabit && (
-        <UpdateHabitModal
-          isOpen={modalIsOpen}
-          onRequestClose={() => setModalIsOpen(false)}
-          habit={selectedHabit}
-          onHabitUpdated={handleHabitUpdated}
-          userEmail={user.email}
-        />
+      {/* ------------ MODAL SECTION UPDATED ------------ */}
+      {/* এখানে fixed পজিশন ব্যবহার করা হয়েছে যাতে এটি স্ক্রিনের মাঝে ভাসে */}
+      {modalIsOpen && selectedHabit && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 overflow-y-auto">
+          <div className="w-full max-w-lg relative">
+             {/* Close Button if not present in modal */}
+             <button 
+                onClick={() => setModalIsOpen(false)}
+                className="absolute -top-4 -right-4 btn btn-circle btn-sm btn-error text-white z-50 shadow-lg"
+             >
+                ✕
+             </button>
+             
+             <UpdateHabitModal
+                isOpen={modalIsOpen}
+                onRequestClose={() => setModalIsOpen(false)}
+                habit={selectedHabit}
+                onHabitUpdated={handleHabitUpdated}
+                userEmail={user.email}
+              />
+          </div>
+        </div>
       )}
+      {/* ----------------------------------------------- */}
     </div>
   );
 };

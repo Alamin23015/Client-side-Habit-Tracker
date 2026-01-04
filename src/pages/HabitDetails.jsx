@@ -20,15 +20,25 @@ const HabitDetails = () => {
 
   const handleComplete = async () => {
     if (!user) return toast.error("Please login first!");
+    
     try {
+      
       const token = await user.getIdToken();
-      const res = await axios.patch(`${import.meta.env.VITE_API_URL}/habits/${id}/complete`, {}, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      
+      const res = await axios.patch(
+        `${import.meta.env.VITE_API_URL}/habits/${id}/complete`, 
+        { userEmail: user.email },
+        {
+           headers: { Authorization: `Bearer ${token}` }
+        }
+      );
+
       setHabit(res.data);
-      toast.success("Streak Updated!");
-    } catch {
-      toast.error("Failed to update");
+      toast.success("Great job! Streak Updated! 🎉");
+    } catch (err) {
+      // এরর মেসেজটি কনসোল এবং টোস্টে দেখা যাবে
+      console.error(err);
+      toast.error(err.response?.data?.message || "Failed to update");
     }
   };
 
