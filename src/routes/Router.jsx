@@ -33,22 +33,22 @@ const router = createBrowserRouter([
     ],
   },
   
-  // ড্যাশবোর্ড এরিয়া (আপনার আসল পেজগুলো এখানে আনা হয়েছে)
+  
   {
     path: "/dashboard",
     element: <PrivateRoute><DashboardLayout /></PrivateRoute>,
     children: [
       {
         path: "home",
-        element: <DashboardHome />, // ড্যাশবোর্ড এর মেইন পেজ
+        element: <DashboardHome />, 
       },
       {
         path: "add-habit",
-        element: <AddHabit />, // আপনার AddHabit পেজ
+        element: <AddHabit />, 
       },
       {
         path: "my-habits",
-        element: <MyHabits />, // আপনার MyHabits পেজ
+        element: <MyHabits />, 
       },
       {
         path: "profile",

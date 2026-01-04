@@ -44,7 +44,7 @@ const Navbar = () => {
       {!user && (
         <li>
            
-           <Link to="/" className="font-medium hover:opacity-80">About Us</Link>
+           <Link to="/about-us" className="font-medium hover:opacity-80">About</Link>
         </li>
       )}
 

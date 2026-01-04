@@ -24,6 +24,7 @@ import DashboardHome from "./pages/DashboardHome";
 import MyProfile from "./components/MyProfile"
 // Components
 import PrivateRoute from './components/PrivateRoute'; 
+import AboutUs from "./components/AboutUs";
 
 // Context & Providers
 import AuthProvider from './context/AuthContext'; 
@@ -47,6 +48,11 @@ const router = createBrowserRouter([
         element: <BrowsePublicHabits />,
       },
       {
+       path: "/about-us",
+       element: <AboutUs></AboutUs>
+      },
+
+      {
         path: "/habit/:id",
         element: <PrivateRoute><HabitDetails /></PrivateRoute>,
       }
@@ -60,15 +66,15 @@ const router = createBrowserRouter([
     children: [
       {
         path: "home",
-        element: <DashboardHome />, // Link: /dashboard/home
+        element: <DashboardHome />, 
       },
       {
         path: "add-habit",
-        element: <AddHabit />, // Link: /dashboard/add-habit
+        element: <AddHabit />, 
       },
       {
         path: "my-habits",
-        element: <MyHabits />, // Link: /dashboard/my-habits
+        element: <MyHabits />, 
       },
       {
         path: "profile",
